@@ -1,0 +1,7 @@
+{
+  "ServerDB": "<Tu Servidor>",
+  "DatabaseBD": "<Tu BD>",
+  "UserIDDB": "<Tu User>",
+  "PasswordDB": "<Tu Pass>",
+  "DirectorioArchivos": "<Tu folder de path scripts>"
+}
