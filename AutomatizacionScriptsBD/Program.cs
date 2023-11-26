@@ -1,5 +1,5 @@
-﻿using AutomatizacionScriptsMysql.Helper;
-using AutomatizacionScriptsMysql.Interfaces;
+﻿using AutomatizacionScriptsBD.Helper;
+using AutomatizacionScriptsBD.Interfaces;
 using System.Data;
 using System.Text;
 using System.Text.Json;

@@ -1,4 +1,4 @@
-﻿namespace AutomatizacionScriptsMysql.Helper
+﻿namespace AutomatizacionScriptsBD.Helper
 {
     public class Log
     {

@@ -2,7 +2,7 @@
 using MySql.Data.MySqlClient;
 using System.Data;
 
-namespace AutomatizacionScriptsMysql.Interfaces
+namespace AutomatizacionScriptsBD.Interfaces
 {
     public interface IDatabaseProvider
     {
