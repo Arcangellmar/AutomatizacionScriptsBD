@@ -8,11 +8,9 @@ Descarga el compilado y modifica el archivo de configuracion
 
 ```bash
 {
-    "ServerDB": "<Tu Servidor>",
-    "DatabaseBD": "<Tu BD>",
-    "UserIDDB": "<Tu User>",
-    "PasswordDB": "<Tu Pass>",
-    "DirectorioArchivos": "<Tu folder de path scripts>"
+  "ConnectionString": "<Tu ConnectionString>",
+  "DirectorioArchivos": "<Tu folder de path scripts>",
+  "ProviderSQL": "<1: Mysql | 2: SQL Server | Other: NotImplementedException >"
 }
 ```
 Luego ejecuta el archivo .exe y se generaran una carpeta Log y Generado a nivel del proyecto.
