@@ -1,5 +1,6 @@
 ﻿using AutomatizacionScriptsMysql.Helper;
-using MySql.Data.MySqlClient;
+using AutomatizacionScriptsMysql.Interfaces;
+using System.Data;
 using System.Text;
 using System.Text.Json;
 
@@ -23,18 +24,15 @@ try
 
     if (datos == null) throw new Exception("Configuracion no encontrada");
 
-    string? ServerDB = datos.ServerDB;
-    string? DatabaseBD = datos.DatabaseBD;
-    string? UserIDDB = datos.UserIDDB;
-    string? PasswordDB = datos.PasswordDB;
+    string? ConnectionString = datos.ConnectionString;
     string? DirectorioArchivos = datos.DirectorioArchivos;
+    string? ProviderSQL = datos.ProviderSQL;
 
 
     // Validaciones iniciales
     if (String.IsNullOrEmpty(DirectorioArchivos)) throw new Exception("Directorio de archivos vacio o nulo");
-    if (String.IsNullOrEmpty(ServerDB)) throw new Exception("Servidor BD vacio o nulo");
-    if (String.IsNullOrEmpty(DatabaseBD)) throw new Exception("Base de datos vacia o nulo");
-    if (String.IsNullOrEmpty(UserIDDB) || String.IsNullOrEmpty(PasswordDB)) throw new Exception("Usuario o contraseña vacia o nula");
+    if (String.IsNullOrEmpty(ProviderSQL) || (ProviderSQL != "1" && ProviderSQL != "2") ) throw new Exception("ProviderSQL incorrecto");
+    if (String.IsNullOrEmpty(ConnectionString)) throw new Exception("ConnectionString vacio o nulo");
 
 
     // Generar output
@@ -54,6 +52,21 @@ try
     int contadorExitoso = 0;
 
     // Ejecutamos todos los archivos
+    IDatabaseProvider databaseProvider;
+
+    if (ProviderSQL == "1")
+    {
+        databaseProvider = new MySqlDatabaseProvider(ConnectionString);
+    }
+    else if (ProviderSQL == "2")
+    {
+        databaseProvider = new SqlServerDatabaseProvider(ConnectionString);
+    }
+    else
+    {
+        throw new NotSupportedException("Proveedor de base de datos no compatible");
+    }
+
     foreach (FileInfo archivo in archivos)
     {
 
@@ -62,27 +75,20 @@ try
             // Leemos el script a ejecutar
             string script = File.ReadAllText(archivo.FullName, Encoding.Default);
 
-            MySqlConnectionStringBuilder connectionBuilder = new()
-            {
-                Server = ServerDB,
-                Database = DatabaseBD,
-                UserID = UserIDDB,
-                Password = PasswordDB,
-                //SslMode = MySqlSslMode.Required
-            };
-
-            using (MySqlConnection cn = new(connectionBuilder.ConnectionString))
+            //using (MySqlConnection cn = new(ConnectionString))
+            using (IDbConnection cn = databaseProvider.CreateConnection())
             {
                 cn.Open();
 
                 // Lo ejecutamos como transaccion en caso de error hacemos rollback
-                using (MySqlTransaction transaction = cn.BeginTransaction())
+                using (IDbTransaction transaction = cn.BeginTransaction())
                 {
                     try
                     {
-                        using (MySqlCommand command = new MySqlCommand(script, cn))
+                        using (IDbCommand command = cn.CreateCommand())
                         {
                             command.Transaction = transaction;
+                            command.CommandText = script;
 
                             command.ExecuteNonQuery();
 
